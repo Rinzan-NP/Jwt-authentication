@@ -11,8 +11,8 @@ export default AuthContext;
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [authToken, setAuthToken] = useState(null);
-  const [user, setUser] = useState(null);
+  const [authToken, setAuthToken] = useState(localStorage.getItem('authToken') ? JSON.parse(localStorage.getItem('authTokens')) : null);
+  const [user, setUser] = useState(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null);
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -24,7 +24,8 @@ export const AuthProvider = ({ children }) => {
     if (response.status === 200) {
       setAuthToken(data);
       setUser(jwtDecode(data.access));
-      console.log(jwtDecode(data.access))
+      localStorage.setItem('user',JSON.stringify(jwtDecode(data.access)))
+      localStorage.setItem('authToken',JSON.stringify(data))
       navigate("/");
     }
   };
