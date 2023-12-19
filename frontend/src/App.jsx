@@ -11,19 +11,14 @@ import Navbar from "./components/Navbar";
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        
-        <Routes>
-          <Route element={<PrivateRoute />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
-          </Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-
-          
-        </Routes>
-      </AuthProvider>
+      <Routes>
+        <Route element={<PrivateRoute />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
     </Router>
   );
 }

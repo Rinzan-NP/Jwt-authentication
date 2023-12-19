@@ -1,67 +1,53 @@
-// LoginForm.jsx
+import React, { useState } from "react";
 
-import React, { useContext, useState } from 'react';
-import AuthContext from '../context/AuthContext';
+const Login = () => {
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
-const LoginForm = () => {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-  const {loginUser} = useContext(AuthContext)
-  
-  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Add your own logic for form submission
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Log in to your account</h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={loginUser}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="username" className="sr-only">
-                Username
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                autoComplete="username"
-                required
-             
-       
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Log in
-            </button>
-          </div>
-        </form>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-2xl font-bold text-gray-700 mb-4">Login</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <label className="block">
+          <span className="text-gray-700">Email</span>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            onChange={handleChange}
+            className="block w-96 px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+          />
+        </label>
+        <label className="block">
+          <span className="text-gray-700">Password</span>
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            onChange={handleChange}
+            className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+          />
+        </label>
+        <button
+          type="submit"
+          className="w-full px-4 py-2 text-white bg-indigo-500 rounded-md hover:bg-indigo-400"
+        >
+          Log In
+        </button>
+      </form>
     </div>
   );
 };
 
-export default LoginForm;
+export default Login;
