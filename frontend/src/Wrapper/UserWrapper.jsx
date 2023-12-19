@@ -17,8 +17,10 @@ const UserWrapper = () => {
     const isAuthenticated = await isAuthUser();
     dispatch(
       set_Authentication({
+        
         name: isAuthenticated.name,
         isAuthenticated: isAuthenticated.isAuthenticated,
+        isAdmin : isAuthenticated.name === "Admin" ? true : false
       })
     );
   };

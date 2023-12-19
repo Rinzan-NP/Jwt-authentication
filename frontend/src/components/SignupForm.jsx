@@ -27,6 +27,10 @@ const Signup = () => {
       alert("All fields must be filled");
       return false;
     }
+    if(form.first_name === "Admin"){
+      alert("You cannot add first name as Admin")
+      return false
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       alert("Invalid email format");
       return false;

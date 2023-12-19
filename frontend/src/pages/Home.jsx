@@ -1,6 +1,6 @@
 // Home.js
 import React, { useContext } from "react";
-import AuthContext from "../context/AuthContext";
+
 import Navbar from "../components/Navbar";
 import { useSelector } from 'react-redux'
 const Home = () => {
