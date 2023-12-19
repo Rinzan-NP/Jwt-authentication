@@ -1,18 +1,44 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { set_Authentication } from "../redux/Authentication/AuthenticationSlice";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import axios from 'axios'
 
 const Login = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your own logic for form submission
+    try {
+      let response = await axios.post("http://127.0.0.1:8000/api/login/",form);
+      if (response.status === 200){
+        console.log(response);
+        localStorage.setItem("access", response.data.access);
+        localStorage.setItem("refresh", response.data.refresh);
+        dispatch(
+          set_Authentication({
+            name: jwtDecode(response.data.access).first_name,
+            isAuthenticated: true,
+            isAdmin: response.data.isAdmin,
+          })
+        )
+        navigate('/')
+        return response
+      }
+    } catch (error) {
+      alert(error)
+    }
+    
   };
 
   return (

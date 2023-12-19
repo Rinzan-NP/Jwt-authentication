@@ -3,8 +3,8 @@ import authenticationSliceReducer from "./Authentication/AuthenticationSlice";
 
 
 export default configureStore({
-    reducer: {
-        authentication_user: authenticationSliceReducer,
-
-    },
-  });   
+  reducer: {
+    authentication_user: authenticationSliceReducer,
+   
+  },
+});

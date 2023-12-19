@@ -18,6 +18,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         token["username"] = user.username
+        token["isAdmin"] = user.is_superuser
 
         # ...
 
@@ -60,7 +61,7 @@ class LoginView(APIView):
         content = {
                      'refresh': str(refresh),
                      'access': str(refresh.access_token),
-                     'isAdmin': user.is_superadmin,
+                     'isAdmin': user.is_superuser,
                 }
         
         return Response(content, status=status.HTTP_200_OK)
