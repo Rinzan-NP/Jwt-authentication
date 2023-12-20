@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AdminPrivateRoute from "../utils/AdminPrivateRoute";
 import AdminLogin from "../pages/AdminLogin";
 import AdminHome from "../pages/AdminHome";
+import AdminAdduser from "../pages/AdminAdduser";
 
 const AdminWrapper = () => {
   return (
@@ -14,6 +15,14 @@ const AdminWrapper = () => {
           element={
             <AdminPrivateRoute>
               <AdminHome />
+            </AdminPrivateRoute>
+          }
+        />
+        <Route
+          path="/addUser"
+          element={
+            <AdminPrivateRoute>
+              <AdminAdduser/>
             </AdminPrivateRoute>
           }
         />

@@ -2,7 +2,8 @@ import React from "react";
 import { PencilAltIcon } from "@heroicons/react/solid";
 const UserListed = (props) => {
   let { user } = props;
-  
+  const dummy = "https://toppng.com/uploads/preview/donna-picarro-dummy-avatar-115633298255iautrofxa.png"
+  const baseImage = "http://127.0.0.1:8000/"
   return (
     <div
    
@@ -11,7 +12,7 @@ const UserListed = (props) => {
       <div className="flex items-center w-full mb-4">
         <div className="rounded-full overflow-hidden mr-3">
           <img
-            src="https://toppng.com/uploads/preview/donna-picarro-dummy-avatar-115633298255iautrofxa.png"
+            src={user.profile_pic ? baseImage + user.profile_pic : dummy}
             alt={`${user.first_name} ${user.last_name}`}
             className="w-10 h-10 object-cover"
           />
