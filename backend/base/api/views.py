@@ -4,25 +4,21 @@ from rest_framework.decorators import api_view
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
-from rest_framework.exceptions import ParseError,AuthenticationFailed
+from rest_framework.exceptions import ParseError, AuthenticationFailed
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from rest_framework import status
-from .serializer import UserRegisterSerializer
+from .serializer import (
+    UserRegisterSerializer,
+    UserDetailsUpdateSerializer,
+    UserSerializer,
+)
+from rest_framework.permissions import IsAuthenticated
+from .serializer import MyTokenObtainPairSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 
 User = get_user_model()
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-
-        token["username"] = user.username
-        token["isAdmin"] = user.is_superuser
-
-        # ...
-
-        return token
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -39,42 +35,80 @@ def getRoutes(request):
 class LoginView(APIView):
     def post(self, request):
         try:
-            email = request.data['email']
-            password =request.data['password']
-            
+            email = request.data["email"]
+            password = request.data["password"]
+
         except KeyError:
-            raise ParseError('All Fields Are Required')
-        
+            raise ParseError("All Fields Are Required")
+
         if not User.objects.filter(email=email).exists():
-            raise AuthenticationFailed('Invalid Email Address')
-        
-        
-        if not User.objects.filter(email=email,is_active=True).exists():
-            raise AuthenticationFailed('You are blocked by admin ! Please contact admin')
-        
-        user = authenticate(username=email,password=password)
+            raise AuthenticationFailed("Invalid Email Address")
+
+        if not User.objects.filter(email=email, is_active=True).exists():
+            raise AuthenticationFailed(
+                "You are blocked by admin ! Please contact admin"
+            )
+
+        user = authenticate(username=email, password=password)
         if user is None:
-            raise AuthenticationFailed('Invalid Password')
-        
+            raise AuthenticationFailed("Invalid Password")
+
         refresh = RefreshToken.for_user(user)
         refresh["first_name"] = str(user.first_name)
         content = {
-                     'refresh': str(refresh),
-                     'access': str(refresh.access_token),
-                     'isAdmin': user.is_superuser,
-                }
-        
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "isAdmin": user.is_superuser,
+        }
+
         return Response(content, status=status.HTTP_200_OK)
 
 
-#registerView
+# registerView
 class RegisterView(APIView):
     def post(self, request):
-        serializer = UserRegisterSerializer(data = request.data)
+        serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
 
         else:
-            return Response(serializer.errors,status=status.HTTP_406_NOT_ACCEPTABLE)
-        content = {'message' : "Accoutn created successfully!"}
+            return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+        content = {"message": "Accoutn created successfully!"}
         return Response(content)
+
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = User.objects.get(id=request.user.id)
+        data = UserSerializer(user).data
+
+        try:
+            profile_pic = user.profile_pic
+            data["profile_pic"] = request.build_absolute_uri("/")[:-1] + profile_pic.url
+        except:
+            data["profile_pic"] = ""
+        return Response(data)
+
+
+class ProfileUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request):
+        data = request.data
+        user = User.objects.get(id = request.user.id)
+        user_update_details_serializer = UserDetailsUpdateSerializer(
+            user, data, partial=True
+        )
+        if not request.FILES:
+            user_update_details_serializer.fields.pop('profile_pic',None)
+        
+        if user_update_details_serializer.is_valid():
+            user_update_details_serializer.save()
+            return Response(user_update_details_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(user_update_details_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+

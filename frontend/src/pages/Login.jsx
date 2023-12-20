@@ -1,10 +1,12 @@
 import React from 'react'
 import LoginForm from '../components/LoginForm'
-import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
-  const data = useSelector((state) => state.authentication_user)
-  console.log(data,"kk");
+  
+  
+  
+
   return (
     <LoginForm/>
   )

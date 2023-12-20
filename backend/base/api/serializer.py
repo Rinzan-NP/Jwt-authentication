@@ -1,3 +1,4 @@
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
@@ -11,6 +12,18 @@ class UserSerializer(ModelSerializer):
         exclude = ('password',)
 
 
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        token["first_name"] = user.first_name
+        token["isAdmin"] = user.is_superuser
+
+        # ...
+
+        return token
+    
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -33,7 +46,11 @@ class UserRegisterSerializer(serializers.ModelSerializer):
        
 
 class UserDetailsUpdateSerializer(serializers.ModelSerializer):
+    profile_pic = serializers.ImageField(required=False)
+
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'phone_number', 'email', 'profile_pic']
+        fields = ['profile_pic', 'first_name', 'last_name', 'email']
+
+
 

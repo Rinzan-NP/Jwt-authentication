@@ -8,6 +8,7 @@ import Profile from "../pages/Profile";
 import isAuthUser from "../utils/isAuthUser";
 import { useDispatch, useSelector } from "react-redux";
 import { set_Authentication } from "../redux/Authentication/AuthenticationSlice";
+import PublicRoute from "../utils/PublicRoute";
 
 const UserWrapper = () => {
   const dispatch = useDispatch();
@@ -17,25 +18,21 @@ const UserWrapper = () => {
     const isAuthenticated = await isAuthUser();
     dispatch(
       set_Authentication({
-        
         name: isAuthenticated.name,
         isAuthenticated: isAuthenticated.isAuthenticated,
-        isAdmin : isAuthenticated.name === "Admin" ? true : false
+        isAdmin: isAuthenticated.name === "Admin" ? true : false,
       })
     );
   };
 
   useEffect(() => {
     if (!authentication_user.name) {
-      console.log("the auth user  ");
       checkAuth();
     }
     if (authentication_user.isAuthenticated) {
-      console.log("authenticated");
     }
     // eslint-disable-next-line
   }, [authentication_user]);
-  
 
   return (
     <Routes>
@@ -48,17 +45,23 @@ const UserWrapper = () => {
           </PrivateRoute>
         }
       ></Route>
+      <Route exact path="/" element={<Home />}></Route>
       <Route
-        exact
-        path="/"
+        path="/login"
         element={
-          <PrivateRoute>
-            <Home />
-          </PrivateRoute>
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
         }
-      ></Route>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<SignUp />} />
+      />
+      <Route
+        path="/signup"
+        element={
+          <PublicRoute>
+            <SignUp />
+          </PublicRoute>
+        }
+      />
     </Routes>
   );
 };
