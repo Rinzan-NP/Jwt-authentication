@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 
 import store from "./redux/store";
 import UserWrapper from "./Wrapper/UserWrapper";
+import AdminWrapper from "./Wrapper/Adminwrapper";
 
 function App() {
   return (
@@ -11,7 +12,7 @@ function App() {
       <Provider store={store}>
         <Routes>
           <Route path="/*" element={<UserWrapper/>}></Route>
-          <Route path="admin/*" element={<h1>hello</h1>}></Route>
+          <Route path="admin/*" element={<AdminWrapper/>}></Route>
         </Routes>
       </Provider>
     </Router>

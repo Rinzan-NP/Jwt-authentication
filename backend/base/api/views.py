@@ -55,6 +55,7 @@ class LoginView(APIView):
 
         refresh = RefreshToken.for_user(user)
         refresh["first_name"] = str(user.first_name)
+        refresh["is_superuser"] = user.is_superuser
         content = {
             "refresh": str(refresh),
             "access": str(refresh.access_token),
@@ -98,17 +99,51 @@ class ProfileUpdateView(APIView):
 
     def post(self, request):
         data = request.data
-        user = User.objects.get(id = request.user.id)
+        user = User.objects.get(id=request.user.id)
         user_update_details_serializer = UserDetailsUpdateSerializer(
             user, data, partial=True
         )
         if not request.FILES:
-            user_update_details_serializer.fields.pop('profile_pic',None)
-        
+            user_update_details_serializer.fields.pop("profile_pic", None)
+
         if user_update_details_serializer.is_valid():
             user_update_details_serializer.save()
-            return Response(user_update_details_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                user_update_details_serializer.data, status=status.HTTP_201_CREATED
+            )
         else:
-            return Response(user_update_details_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                user_update_details_serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
+
+class AdminLoginView(APIView):
+    def post(self, request):
+        try:
+            email = request.data["email"]
+            password = request.data["password"]
+        except:
+            raise ParseError("All Fields Are Required")
+
+        if not User.objects.filter(email=email).exists():
+            raise AuthenticationFailed("Invalid Email Address")
+
+        if not User.objects.filter(email=email, is_superuser=True).exists():
+            raise AuthenticationFailed("You do not ahve the permission to login!")
+
+        user = authenticate(username=email, password=password)
+        if user is None:
+            raise AuthenticationFailed("Invalid Password")
+
+        refresh = RefreshToken.for_user(user)
+        refresh["is_superuser"] = user.is_superuser
+        content = {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "isAdmin": True,
+        }
+
+        return Response(content, status=status.HTTP_200_OK)
+
+        

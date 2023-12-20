@@ -76,7 +76,7 @@ const Profile = () => {
         set_Authentication({
           name: response.data.first_name,
           isAuthenticated: true,
-          isAdmin: response.data.first_name === "Admin" ? true : false,
+          isAdmin: response.data.is_superuser,
         })
       );
     } catch (error) {

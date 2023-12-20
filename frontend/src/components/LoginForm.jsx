@@ -5,7 +5,9 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios'
 
-const Login = () => {
+const Login = (props) => {
+  let {url, navigated, Title} = props
+  const baseUrl = 'http://127.0.0.1:8000/'
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -20,9 +22,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let response = await axios.post("http://127.0.0.1:8000/api/login/",form);
+      let response = await axios.post(baseUrl + url,form);
       if (response.status === 200){
-        console.log(response);
         localStorage.setItem("access", response.data.access);
         localStorage.setItem("refresh", response.data.refresh);
         dispatch(
@@ -32,8 +33,9 @@ const Login = () => {
             isAdmin: response.data.isAdmin,
           })
         )
-        navigate('/')
-        return response
+        console.log(response);
+        navigate(navigated)
+        
       }
     } catch (error) {
       alert(error)
@@ -43,7 +45,7 @@ const Login = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold text-gray-700 mb-4">Login</h1>
+      <h1 className="text-2xl font-bold text-gray-700 mb-4">{Title}</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <label className="block">
           <span className="text-gray-700">Email</span>
@@ -75,5 +77,8 @@ const Login = () => {
     </div>
   );
 };
+Login.defaultProps = {
+  Title: 'Login'
+};  
 
 export default Login;

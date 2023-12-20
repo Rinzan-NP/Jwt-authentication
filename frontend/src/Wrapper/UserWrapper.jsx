@@ -20,7 +20,7 @@ const UserWrapper = () => {
       set_Authentication({
         name: isAuthenticated.name,
         isAuthenticated: isAuthenticated.isAuthenticated,
-        isAdmin: isAuthenticated.name === "Admin" ? true : false,
+        isAdmin: isAuthenticated.is_superuser,
       })
     );
   };
@@ -29,9 +29,8 @@ const UserWrapper = () => {
     if (!authentication_user.name) {
       checkAuth();
     }
-    if (authentication_user.isAuthenticated) {
-    }
-    // eslint-disable-next-line
+    
+    
   }, [authentication_user]);
 
   return (

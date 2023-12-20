@@ -8,7 +8,7 @@ const Login = () => {
   
 
   return (
-    <LoginForm/>
+    <LoginForm url="api/login/" navigated="/" />
   )
 }
 
