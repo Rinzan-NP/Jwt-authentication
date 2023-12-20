@@ -14,7 +14,7 @@ from .serializer import (
     UserDetailsUpdateSerializer,
     UserSerializer,
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from .serializer import MyTokenObtainPairSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -146,4 +146,11 @@ class AdminLoginView(APIView):
 
         return Response(content, status=status.HTTP_200_OK)
 
-        
+class UserListingView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserDetailsUpdateSerializer(users, many=True)  # Use many=True for a queryset
+        serialized_data = serializer.data  
+        return Response(serialized_data)

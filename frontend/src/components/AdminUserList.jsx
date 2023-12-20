@@ -1,37 +1,47 @@
-import React, { useState } from "react";
-import { PencilAltIcon } from "@heroicons/react/solid";
-
-const users = [
-  { id: 1, firstName: "John", lastName: "Doe", email: "john.doe@example.com" },
-  { id: 2, firstName: "Jane", lastName: "Doe", email: "jane.doe@example.com" },
-  {
-    id: 3,
-    firstName: "Alice",
-    lastName: "Smith",
-    email: "alice.smith@example.com",
-  },
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import UserListed from "./Admin/UserListed";
+import { useNavigate } from "react-router-dom";
 
 const UserList = () => {
+  const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddUserForm, setShowAddUserForm] = useState(false);
-  const [newUser, setNewUser] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-  });
+  const navigate = useNavigate()
+  
 
   const filteredUsers = users.filter((user) =>
-    `${user.firstName} ${user.lastName} ${user.email}`
+    `${user.email}`
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
   );
 
-  const handleAddUser = () => {
-    console.log("New User:", newUser);
-    setNewUser({ firstName: "", lastName: "", email: "" });
-    setShowAddUserForm(false);
-  };
+  
+  
+
+  useEffect(() => {
+    const token = localStorage.getItem("access");
+    const fetchData = async () => {
+      try {
+        let response = await axios.get(
+          "http://127.0.0.1:8000/api/admin/users",
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.status === 200) {
+          setUsers(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="container mx-auto my-10 p-6 rounded-lg shadow-md">
@@ -48,7 +58,7 @@ const UserList = () => {
           className="flex-1 p-3 border rounded-md focus:outline-none focus:ring focus:border-purple-300"
         />
         <button
-          onClick={() => setShowAddUserForm(!showAddUserForm)}
+          onClick={() => navigate('/admin/addUser/') }
           className="ml-4 p-2 text-white bg-indigo-500 rounded-md hover:bg-indigo-400 focus:ring focus:border-purple-300"
         >
           {showAddUserForm ? "Cancel" : "Add User"}
@@ -58,18 +68,9 @@ const UserList = () => {
       {showAddUserForm && <div className="mb-6">{/* Add User Form */}</div>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredUsers.map((user) => (
-          <div
-            key={user.id}
-            className="bg-white p-6 rounded-md shadow-md flex flex-col"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold text-gray-700">{`${user.firstName} ${user.lastName}`}</h3>
-              <button className="rounded-full p-2 pl-3 bg-indigo-500 text-white w-10 h-10">
-                <PencilAltIcon className="h-5 w-5" />
-              </button>
-            </div>
-            <p className="text-purple-900">{user.email}</p>
+        {filteredUsers.map((user, i) => (
+          <div key={i}>
+            <UserListed user={user} />
           </div>
         ))}
       </div>
