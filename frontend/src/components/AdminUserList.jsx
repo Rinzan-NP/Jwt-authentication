@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showAddUserForm, setShowAddUserForm] = useState(false);
+  
   const navigate = useNavigate()
   
 
@@ -16,6 +16,11 @@ const UserList = () => {
       .includes(searchQuery.toLowerCase())
   );
 
+  const removeUser = (id) => {
+   
+      let new_users = users.filter((user) => user.id !== id)
+      setUsers(new_users) 
+  }
   
   
 
@@ -23,6 +28,7 @@ const UserList = () => {
     const token = localStorage.getItem("access");
     const fetchData = async () => {
       try {
+      
         let response = await axios.get(
           "http://127.0.0.1:8000/api/admin/users",
           {
@@ -61,16 +67,16 @@ const UserList = () => {
           onClick={() => navigate('/admin/addUser/') }
           className="ml-4 p-2 text-white bg-indigo-500 rounded-md hover:bg-indigo-400 focus:ring focus:border-purple-300"
         >
-          {showAddUserForm ? "Cancel" : "Add User"}
+          Add User
         </button>
       </div>
 
-      {showAddUserForm && <div className="mb-6">{/* Add User Form */}</div>}
+   
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredUsers.map((user, i) => (
           <div key={i}>
-            <UserListed user={user} />
+            <UserListed user={user} removeUser={removeUser}/>
           </div>
         ))}
       </div>
@@ -79,3 +85,4 @@ const UserList = () => {
 };
 
 export default UserList;
+export const id  = 3;

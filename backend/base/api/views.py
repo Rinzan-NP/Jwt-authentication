@@ -154,3 +154,12 @@ class UserListingView(APIView):
         serializer = UserDetailsUpdateSerializer(users, many=True)  # Use many=True for a queryset
         serialized_data = serializer.data  
         return Response(serialized_data)
+
+class UserDeleteView(APIView):
+    def delete(self,request, pk):
+        User.objects.get(id = pk).delete()
+        data = {
+            'id':pk,
+            'messsage': 'Deleted successfully '
+        }
+        return Response(data, status=status.HTTP_204_NO_CONTENT)

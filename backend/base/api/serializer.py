@@ -50,7 +50,7 @@ class UserDetailsUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['profile_pic', 'first_name', 'last_name', 'email']
+        fields = ['id','profile_pic', 'first_name', 'last_name', 'email']
 
 
 

@@ -33,11 +33,12 @@ const SignUpForm = ({ onSignUp }) => {
           navigate('/admin/')
         }
       } catch (error) {
-       alert("something went wrong") 
+        console.log(error.response);
+       alert(error.response.statusText); 
       }
 
 
-    onSignUp(userData);
+  
   };
 
   return (
@@ -86,7 +87,7 @@ const SignUpForm = ({ onSignUp }) => {
         </label>
         <input
           type="text"
-          id="last_name"
+          id="phone_number"
           name="phone_number"
           value={userData.phone_number}
           onChange={handleInputChange}
