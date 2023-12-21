@@ -1,10 +1,9 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Alert from "../components/Alert";
 const Signup = () => {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -12,6 +11,7 @@ const Signup = () => {
     password: "",
     phone_number: "",
   });
+  const [formError, setFormError] = useState();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,23 +24,23 @@ const Signup = () => {
       !form.email ||
       !form.phone_number
     ) {
-      alert("All fields must be filled");
+      setFormError("All fields must be filled");
       return false;
     }
-    if(form.first_name === "Admin"){
-      alert("You cannot add first name as Admin")
-      return false
+    if (form.first_name === "Admin") {
+      setFormError("You cannot add first name as Admin");
+      return false;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      alert("Invalid email format");
+      setFormError("Invalid email format");
       return false;
     }
     if (!/^\d{10}$/.test(form.phone_number)) {
-      alert("Invalid phone number format");
+      setFormError("Invalid phone number format");
       return false;
     }
     if (form.confirmPassword !== form.password) {
-      alert("Password must be same");
+      setFormError("Password must be same");
       return false;
     }
     return true;
@@ -54,13 +54,29 @@ const Signup = () => {
           "http://127.0.0.1:8000/api/register/",
           form
         );
-        if (response.status === 200  ){
-          navigate('/login')
+        if (response.status === 200) {
+          navigate("/login");
         }
       } catch (error) {
-       alert("something went wrong") 
+        if (error.response) {
+          const errorMessage =
+            error.response.data?.detail || "An error occurred";
+
+          // Check for specific validation errors
+          if (error.response.data.phone_number) {
+            setFormError("Phone number is already in use.");
+          } else if (error.response.data.email) {
+            setFormError("Email is already in use.");
+          } else {
+            setFormError(errorMessage);
+          }
+        } else if (error.request) {
+          setFormError("No response received from the server");
+        } else {
+          console.log(error.response.data);
+          setFormError(Object.entries(error.response.data)[0][1]);
+        }
       }
-      
     }
   };
 
@@ -133,6 +149,13 @@ const Signup = () => {
             className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
           />
         </label>
+        {formError && (
+          <Alert
+            message={formError}
+            color="orange"
+            heading="Credential Error!"
+          />
+        )}
         <button
           type="submit"
           className="w-full px-4 py-2 text-white bg-indigo-500 rounded-md hover:bg-indigo-400"
