@@ -9,6 +9,7 @@ const UserDetail = (props) => {
   const [form, setForm] = useState({
     profile_pic: "",
     first_name: "",
+    phone_number: "",
     last_name: "",
     email: "",
   });
@@ -17,16 +18,30 @@ const UserDetail = (props) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   const handleSubmit = async (event) => {
+    event.preventDefault();
+    console.log(form);
     try {
-        const reponse = await axios.post("",)
+      const response = await axios.patch(
+        `http://127.0.0.1:8000/api/admin/user/update/${userId}`,
+        form,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if(response.status == 200){
+        alert("Updated Successfully!");
+        navigate("/admin/");
+      }
     } catch (error) {
-        
+      console.log(error);
     }
-    
   };
 
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
         let response = await axios.get(
@@ -39,7 +54,7 @@ const UserDetail = (props) => {
             },
           }
         );
-        
+        console.log(response.data);
         setForm(response.data);
       } catch (error) {
         if (error.response.status == 404) {
@@ -69,6 +84,15 @@ const UserDetail = (props) => {
             name="last_name"
             placeholder="Last Name"
             value={form.last_name}
+            onChange={handleChange}
+            className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+          />
+          <input
+            type="text"
+            name="phone_number"
+            placeholder="Phone Number"
+            value={form.phone_number}
+            readOnly
             onChange={handleChange}
             className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
           />

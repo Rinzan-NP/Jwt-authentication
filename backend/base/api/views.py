@@ -13,10 +13,12 @@ from .serializer import (
     UserRegisterSerializer,
     UserDetailsUpdateSerializer,
     UserSerializer,
+    UpdateUserDetial
 )
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from .serializer import MyTokenObtainPairSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.generics import UpdateAPIView
 
 User = get_user_model()
 
@@ -181,9 +183,11 @@ class UserDeatailView(APIView):
         return Response(serialized_data, status=status.HTTP_200_OK)
     
     
-class UserDetailUpdateView(APIView):
+class UserUpdateView(UpdateAPIView):
     permission_classes = [IsAdminUser]
-    parser_classes = (MultiPartParser, FormParser)
+    queryset = User.objects.all()
+    serializer_class = UpdateUserDetial
+    lookup_field = "pk"
+    
 
-    def post(self, request):
-        pass
+
