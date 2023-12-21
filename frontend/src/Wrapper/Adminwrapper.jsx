@@ -5,12 +5,20 @@ import AdminLogin from "../pages/AdminLogin";
 import AdminHome from "../pages/AdminHome";
 import AdminAdduser from "../pages/AdminAdduser";
 import AdminUserDetail from "../pages/AdminUserDetail";
+import NoAdminnRoute from "../utils/NoAdminRoute"
 
 const AdminWrapper = () => {
   return (
     <>
       <Routes>
-        <Route path="/login" element={<AdminLogin />} />
+        <Route
+          path="/login"
+          element={
+            <NoAdminnRoute>
+              <AdminLogin />
+            </NoAdminnRoute>
+          }
+        />
         <Route
           path="/"
           element={
@@ -23,7 +31,7 @@ const AdminWrapper = () => {
           path="/addUser"
           element={
             <AdminPrivateRoute>
-              <AdminAdduser/>
+              <AdminAdduser />
             </AdminPrivateRoute>
           }
         />
@@ -31,13 +39,11 @@ const AdminWrapper = () => {
           path="/userDetail/:userId"
           element={
             <AdminPrivateRoute>
-              <AdminUserDetail/>
+              <AdminUserDetail />
             </AdminPrivateRoute>
           }
         />
       </Routes>
-      
-      
     </>
   );
 };

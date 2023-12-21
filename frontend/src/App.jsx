@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 
@@ -7,6 +7,9 @@ import UserWrapper from "./Wrapper/UserWrapper";
 import AdminWrapper from "./Wrapper/Adminwrapper";
 
 function App() {
+  useEffect(()=>{
+
+  },[])
   return (
     <Router>
       <Provider store={store}>
