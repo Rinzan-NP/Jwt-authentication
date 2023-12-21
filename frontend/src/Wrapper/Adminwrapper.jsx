@@ -4,6 +4,7 @@ import AdminPrivateRoute from "../utils/AdminPrivateRoute";
 import AdminLogin from "../pages/AdminLogin";
 import AdminHome from "../pages/AdminHome";
 import AdminAdduser from "../pages/AdminAdduser";
+import AdminUserDetail from "../pages/AdminUserDetail";
 
 const AdminWrapper = () => {
   return (
@@ -26,7 +27,17 @@ const AdminWrapper = () => {
             </AdminPrivateRoute>
           }
         />
+        <Route
+          path="/userDetail/:userId"
+          element={
+            <AdminPrivateRoute>
+              <AdminUserDetail/>
+            </AdminPrivateRoute>
+          }
+        />
       </Routes>
+      
+      
     </>
   );
 };

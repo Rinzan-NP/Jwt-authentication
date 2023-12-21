@@ -150,7 +150,7 @@ class UserListingView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request):
-        users = User.objects.all()
+        users = User.objects.filter(is_superuser = False)
         serializer = UserDetailsUpdateSerializer(users, many=True)  # Use many=True for a queryset
         serialized_data = serializer.data  
         return Response(serialized_data)
@@ -163,3 +163,27 @@ class UserDeleteView(APIView):
             'messsage': 'Deleted successfully '
         }
         return Response(data, status=status.HTTP_204_NO_CONTENT)
+    
+class UserDeatailView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, pk):
+        try:
+            user = User.objects.get(id = pk)
+        except User.DoesNotExist:
+            message = "User not found"
+            return Response({"detail": message}, status=status.HTTP_404_NOT_FOUND)
+                
+        serializer = UserDetailsUpdateSerializer(user, many=False)
+        
+        serialized_data = serializer.data
+        
+        return Response(serialized_data, status=status.HTTP_200_OK)
+    
+    
+class UserDetailUpdateView(APIView):
+    permission_classes = [IsAdminUser]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request):
+        pass
