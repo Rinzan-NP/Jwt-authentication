@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { set_Authentication } from "../redux/Authentication/AuthenticationSlice";
 
 const Profile = () => {
   const [form, setForm] = useState({
@@ -79,6 +80,7 @@ const Profile = () => {
           isAdmin: response.data.is_superuser,
         })
       );
+      alert("Updated successfully");  
     } catch (error) {
       console.error(error);
     }
